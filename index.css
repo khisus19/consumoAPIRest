@@ -46,8 +46,8 @@ img {
     width: 100%;
 }
 #favoritesDoggies img {
-    width: 500px;
-    height: 500px;
+    width: 150px;
+    height: 150px;
     border: 2px double black;
 }
 #favoritesDoggies button {
