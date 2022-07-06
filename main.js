@@ -1,6 +1,7 @@
-const API = "https://api.thedogapi.com/v1/images/search?limit=2&api_key=b612b58d-d697-4d4c-aa50-1022152aacc5"
-const API_FAVORITES = "https://api.thedogapi.com/v1/favourites?api_key=b612b58d-d697-4d4c-aa50-1022152aacc5"
+const API = "https://api.thedogapi.com/v1/images/search?limit=2"
+const API_FAVORITES = "https://api.thedogapi.com/v1/favourites"
 const API_FAVORITES_DELETE = (id) => `https://api.thedogapi.com/v1/favourites/${id}?api_key=b612b58d-d697-4d4c-aa50-1022152aacc5`
+const API_UPLOAD = "https://api.thedogapi.com/v1/images/upload"
 
 const img0 = document.querySelector("#img0");
 const img1 = document.querySelector("#img1");
@@ -24,10 +25,14 @@ async function loadRandom() {
     }
 }
 async function loadFavorites() {
-    const res = await fetch(API_FAVORITES);
+    const res = await fetch(API_FAVORITES, {
+        method: "GET",
+        headers: {
+            "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
+        }
+    });
     const dog = await res.json();
-    console.log("Favorites:")
-    console.log(dog)
+    console.log("Favorites:", dog.length);
     
     if (res.status !== 200) {
         spanError.innerHTML = "<h3>Hubo un error: </h3>" + res.status + dog.message;
@@ -61,6 +66,7 @@ async function saveFavorite(id) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
         },
         body: JSON.stringify({
             image_id: id,
@@ -78,7 +84,10 @@ async function saveFavorite(id) {
 
 async function deleteFavorite(id) {
     const res = await fetch(API_FAVORITES_DELETE(id), {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
+        }
     });
     const dog = await res.json();
 
@@ -87,6 +96,33 @@ async function deleteFavorite(id) {
     } else {
         console.log("Doggie deleted");
         loadFavorites();
+    }
+}
+
+async function uploadDoggyPhoto() {
+    const form = document.getElementById("uploadingForm");
+    const formData = new FormData(form);
+
+    console.log(formData.get("file"))
+
+    const res = await fetch(API_UPLOAD, {
+        method: "POST",
+        headers: {
+            "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
+        },
+        body: formData,
+    })
+    const dog = await res.json();
+
+    if (res.status !== 201) {
+        spanError.innerHTML = "<h3>Hubo un error: </h3>" + res.status + dog.message;
+        console.log(dog.message)
+        console.log({dog})
+    } else {
+        console.log("Uploaded");
+        console.log({dog});
+        console.log(dog.url);
+        saveFavorite(dog.id);
     }
 }
 

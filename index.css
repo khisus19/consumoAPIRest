@@ -29,6 +29,7 @@ article {
 }
 img {
     width: 100%;
+    max-height: 100%;
     margin: 0 auto;
     height: auto;
     display: inline-block;
@@ -47,7 +48,7 @@ img {
 }
 #favoritesDoggies img {
     width: 150px;
-    height: 150px;
+    max-height: 100%;
     border: 2px double black;
 }
 #favoritesDoggies button {
