@@ -1,3 +1,8 @@
+const api = axios.create({
+    baseURL: 'https://api.thedogapi.com/v1'
+});
+api.defaults.headers.common['x-api-key'] = "b612b58d-d697-4d4c-aa50-1022152aacc5";
+
 const API = "https://api.thedogapi.com/v1/images/search?limit=2"
 const API_FAVORITES = "https://api.thedogapi.com/v1/favourites"
 const API_FAVORITES_DELETE = (id) => `https://api.thedogapi.com/v1/favourites/${id}?api_key=b612b58d-d697-4d4c-aa50-1022152aacc5`
@@ -62,20 +67,24 @@ async function loadFavorites() {
     }
 }
 async function saveFavorite(id) {
-    const res = await fetch(API_FAVORITES, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
-        },
-        body: JSON.stringify({
-            image_id: id,
-        }),
+    const {data, status} = await api.post("/favourites", {
+        image_id: id,
     });
-    const dog = await res.json()
 
-    if (res.status !== 200) {
-        spanError.innerHTML = "<h3>Hubo un error: </h3>" + res.status + dog.message;
+    // const res = await fetch(API_FAVORITES, {
+    //     method: "POST",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "x-api-key": "b612b58d-d697-4d4c-aa50-1022152aacc5"
+    //     },
+    //     body: JSON.stringify({
+    //         image_id: id,
+    //     }),
+    // });
+    // const dog = await res.json()
+
+    if (status !== 200) {
+        spanError.innerHTML = "<h3>Hubo un error: </h3>" + status;
     } else {
         console.log("Doggie saved")
         loadFavorites();
